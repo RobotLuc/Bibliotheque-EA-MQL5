@@ -1,0 +1,1 @@
+E:/MQL5-EA/EA.Asym.MultiSignal/Include/Expert/Signal/SignalHA_Am.mqh
