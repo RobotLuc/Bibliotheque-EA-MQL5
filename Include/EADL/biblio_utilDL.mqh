@@ -9,6 +9,7 @@ string fileName = "journal_personnalise.txt"; // Nom du fichier
 //+------------------------------------------------------------------+
 void biblio_utilDL_Init()
 {
+
    // Tentative d'ouverture du fichier en mode écriture/lecture
    fileHandle = FileOpen(fileName, FILE_WRITE | FILE_TXT | FILE_READ);
    if (fileHandle == INVALID_HANDLE)
