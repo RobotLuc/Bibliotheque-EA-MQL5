@@ -10,6 +10,7 @@
 #include <Trade\DealInfo.mqh>
 #include <Trade\HistoryOrderInfo.mqh>
 #include <Indicators\Indicators.mqh>
+#include <Expert\UtilsLTR.mqh>
 //+------------------------------------------------------------------+
 //| enumerations                                                     |
 //+------------------------------------------------------------------+
