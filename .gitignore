@@ -1,3 +1,6 @@
 $GIT_DIR/Profiles/
 $GIT_DIR/Services/
 $GIT_DIR/Shared Projects/
+/Profiles
+/Profiles/Charts
+Profiles/Charts/Default/chart10.chr
