@@ -6,11 +6,33 @@
 
 //--- indicator settings
 #property indicator_chart_window
-#property indicator_buffers 8
-#property indicator_plots   1
-#property indicator_type1   DRAW_COLOR_CANDLES
-#property indicator_color1  DodgerBlue, Red
+#property indicator_buffers 9
+#property indicator_plots   5
+
+//--- ====================== PLOT 1 ======================
+//--- Bougies colorées Heiken Ashi (draw_color_candles)
 #property indicator_label1  "Heiken Ashi Am Open;Heiken Ashi Am High;Heiken Ashi Am Low;Heiken Ashi Am Close"
+
+#property indicator_type1   DRAW_COLOR_CANDLES
+//  Deux couleurs : bleu pour haussier, rouge pour baissier
+#property indicator_color1  DodgerBlue, Red
+
+//--- ====================== PLOT 2 ======================
+//--- Buffer "Bullish" (DRAW_NONE => pas de tracé, mais data visible)
+#property indicator_label2  "Heiken Ashi Bullish"
+#property indicator_type2   DRAW_NONE
+
+//--- ====================== PLOT 3 ======================
+#property indicator_label3  "Heiken Ashi Body"
+#property indicator_type3   DRAW_NONE
+
+//--- ====================== PLOT 4 ======================
+#property indicator_label4  "Heiken Ashi Upper Wick"
+#property indicator_type4   DRAW_NONE
+
+//--- ====================== PLOT 5 ======================
+#property indicator_label5  "Heiken Ashi Lower Wick"
+#property indicator_type5   DRAW_NONE
 
 //--- indicator buffers
 double ExtOBuffer[];       // Heiken Ashi Open
@@ -39,9 +61,17 @@ void OnInit()
    SetIndexBuffer(7, ExtUpperWick, INDICATOR_DATA);
    SetIndexBuffer(8, ExtLowerWick, INDICATOR_DATA);
 
-   //--- set indicator name and other properties
+   //--- Optionnel: préciser qu'on ne veut pas de tracé pour les plots 1..4
+   //    (On l'a déjà fait via #property indicator_typeX = DRAW_NONE.)
+   PlotIndexSetInteger(1, PLOT_DRAW_TYPE, DRAW_NONE);
+   PlotIndexSetInteger(2, PLOT_DRAW_TYPE, DRAW_NONE);
+   PlotIndexSetInteger(3, PLOT_DRAW_TYPE, DRAW_NONE);
+   PlotIndexSetInteger(4, PLOT_DRAW_TYPE, DRAW_NONE);
+
+   //--- Digits, nom de l'indicateur, etc.
    IndicatorSetInteger(INDICATOR_DIGITS, _Digits);
    IndicatorSetString(INDICATOR_SHORTNAME, "Heiken Ashi Amélioré");
+   //--- Valeur vide pour le plot 0 (c'est important pour éviter les tracés parasites)
    PlotIndexSetDouble(0, PLOT_EMPTY_VALUE, 0.0);
   }
 
