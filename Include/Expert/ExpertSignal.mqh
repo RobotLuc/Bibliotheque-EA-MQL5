@@ -481,6 +481,7 @@ double CExpertSignal::Direction(void)
    if(number!=0)
       result/=number;
 //--- return the result
+CUtilsLTR::LogToDesktop(StringFormat("Résultat du vote pondéré : %f",result));
    return(result);
   }
 //+------------------------------------------------------------------+

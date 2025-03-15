@@ -86,6 +86,7 @@ double CSignalITF::Direction(void)
       !(m_bad_minutes_of_hour&(1<<s_time.min))))
       return(EMPTY_VALUE);
 //--- condition OK
-   return(0.0);
+   double direction_parent = CExpertSignal::Direction(); 
+   return direction_parent; // renvoie le score global
   }
 //+------------------------------------------------------------------+

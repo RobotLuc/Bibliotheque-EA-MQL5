@@ -21,7 +21,6 @@
 #include "ExpertSignal.mqh"
 #include "ExpertMoney.mqh"
 #include "ExpertTrailing.mqh"
-#include "Signal\SignalITF.mqh"
 //+------------------------------------------------------------------+
 //| enumerations                                                     |
 //+------------------------------------------------------------------+
@@ -76,7 +75,6 @@ protected:
    CExpertSignal    *m_signal_close;             // trading close signals object   
    CExpertMoney     *m_money;                    // money manager object
    CExpertTrailing  *m_trailing;                 // trailing stops object
-   CSignalITF       *m_temporalFilter;           // Temporal filter for intraday trading
    bool              m_check_volume;             // check and decrease trading volume before OrderSend
    //--- indicators
    CIndicators       m_indicators;               // indicator collection to fast recalculations
@@ -103,7 +101,6 @@ public:
    virtual bool      InitTrailing(CExpertTrailing *trailing=NULL);
    virtual bool      InitMoney(CExpertMoney *money=NULL);
    virtual bool      InitTrade(ulong magic,CExpertTrade *trade=NULL);
-   virtual bool      InitTemporalFilter(CSignalITF *filter=NULL);
    //--- deinitialization
    virtual void      Deinit(void);
    //--- methods of setting adjustable parameters
@@ -138,7 +135,6 @@ protected:
    virtual void      DeinitTrailing(void);
    virtual void      DeinitMoney(void);
    virtual void      DeinitIndicators(void);
-   virtual void      DeinitTemporalFilter(void);   
    //--- refreshing 
    virtual bool      Refresh(void);
    //--- position select depending on netting or hedging
@@ -233,7 +229,6 @@ CExpert::CExpert(void) : m_period_flags(0),
                          m_signal_close(NULL),                         
                          m_money(NULL),
                          m_trailing(NULL),
-                         m_temporalFilter(NULL),
                          m_check_volume(false),
                          m_on_tick_process(true),
                          m_on_trade_process(false),
@@ -319,11 +314,6 @@ bool CExpert::Init(string symbol,ENUM_TIMEFRAMES period,bool every_tick,ulong ma
       Print(__FUNCTION__+": error initialization parameters");
       return(false);
      }
-   if(!InitTemporalFilter())
-     {
-      Print(__FUNCTION__+": error initialization temporal filter object");
-      return(false);
-     }
 //--- initialization for working with trade history
    PrepareHistoryDate();
    HistoryPoint();
@@ -347,8 +337,6 @@ void CExpert::Magic(ulong value)
       m_money.Magic(value);
    if(m_trailing!=NULL)
       m_trailing.Magic(value);
-   if (m_temporalFilter!=NULL)
-      m_temporalFilter.Magic(value);
 //---
    CExpertBase::Magic(value);
   }
@@ -469,28 +457,6 @@ bool CExpert::InitMoney(CExpertMoney *money)
    return(true);
   }
 //+------------------------------------------------------------------+
-//| Initialization temporal filter object                            |
-//+------------------------------------------------------------------+
-bool CExpert::InitTemporalFilter(CSignalITF *filter)
-  {
-   if(m_temporalFilter!=NULL)
-      delete m_temporalFilter;
-//---
-   if(filter==NULL)
-     {
-      if((m_temporalFilter=new CSignalITF)==NULL)
-         return(false);
-     }
-   else
-      m_temporalFilter=filter;
-//--- initializing filter object
-   if(!m_temporalFilter.Init(GetPointer(m_symbol),m_period,m_adjusted_point))
-      return(false);
-   m_temporalFilter.Magic(m_magic);
-//--- ok
-   return(true);
-  }
-//+------------------------------------------------------------------+
 //| Validation settings                                              |
 //+------------------------------------------------------------------+
 bool CExpert::ValidationSettings(void)
@@ -520,13 +486,7 @@ bool CExpert::ValidationSettings(void)
      {
       Print(__FUNCTION__+": error money parameters");
       return(false);
-     }
-//--- Check temporal filter parameters
-   if(!m_temporalFilter.ValidationSettings())
-     {
-      Print(__FUNCTION__+": error temporal filter parameters");
-      return(false);
-     }        
+     }   
 //--- ok
    return(true);
   }
@@ -542,7 +502,6 @@ bool CExpert::InitIndicators(CIndicators *indicators)
    m_used_series|=m_signal_close.UsedSeries();   
    m_used_series|=m_trailing.UsedSeries();
    m_used_series|=m_money.UsedSeries();
-   m_used_series|=m_temporalFilter.UsedSeries();
 //--- create required timeseries
    if(!CExpertBase::InitIndicators(indicators_ptr))
       return(false);
@@ -665,20 +624,7 @@ void CExpert::Deinit(void)
    DeinitMoney();
 //--- delete indicators collection
    DeinitIndicators();
-//--- delete intraday signal filter if any   
-   DeinitTemporalFilter();
-  }
-//+------------------------------------------------------------------+
-//| Deinitialization temporal filter object                          |
-//+------------------------------------------------------------------+
-void CExpert::DeinitTemporalFilter(void)
-  {
-   if(m_temporalFilter != NULL)
-      {
-      delete m_temporalFilter;
-      m_temporalFilter = NULL;
-      }   
-  }  
+   }
 //+------------------------------------------------------------------+
 //| Deinitialization trade object                                    |
 //+------------------------------------------------------------------+
@@ -746,8 +692,8 @@ bool CExpert::Refresh(void)
       return(false);
 //--- check need processing
    TimeToStruct(m_symbol.Time(),time);
-   if(m_period_flags!=WRONG_VALUE && m_period_flags!=0) {
-     //CUtilsLTR::LogToDesktop(StringFormat("<- Horodatage du test refresh et m_period_flag :%f",m_period_flags ));
+   if(m_period_flags!=WRONG_VALUE && m_period_flags!=0) 
+     {
       if((m_period_flags&TimeframesFlags(time))==0)
          return(false);
      }
@@ -778,7 +724,7 @@ bool CExpert::Processing(void)
   {
 //--- calculate signal direction once
    m_signal_open.SetDirection();
-   m_signal_close.SetDirection();   
+   m_signal_close.SetDirection();
 //--- check if open positions
    if(SelectPosition())
      {
@@ -838,14 +784,7 @@ bool CExpert::Processing(void)
 //+------------------------------------------------------------------+
 void CExpert::OnTick(void)
   {
-  
-// Si un filtre temporel est défini, vérifier ses conditions
-   if(m_temporalFilter != NULL)
-     {
-// Si les conditions ne sont pas remplies, sortir immédiatement
-      if(m_temporalFilter.Direction() == EMPTY_VALUE)
-      return;
-     }
+
 //--- check process flag
    if(!m_on_tick_process)
       return;
