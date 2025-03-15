@@ -574,6 +574,79 @@ bool CExpert::InitIndicators(CIndicators *indicators)
       Print(__FUNCTION__+": error initialization indicators of money object");
       return(false);
      }
+ // --- Calcul global pour déterminer m_period_flags
+   int periods[];   // tableau dynamique pour stocker les périodes en minutes
+   int count = 0;
+
+   // Période du signal d'ouverture
+   if(m_signal_open != NULL)
+     {
+      ENUM_TIMEFRAMES tf = m_signal_open.SignalMinPeriod();
+      int p = CUtilsLTR::TimeframeToMinutes(tf);
+      if(p > 0)
+        {
+         ArrayResize(periods, count+1);
+         periods[count] = p;
+         count++;
+        }
+     }
+
+   // Période du signal de fermeture
+   if(m_signal_close != NULL)
+     {
+      ENUM_TIMEFRAMES tf = m_signal_close.SignalMinPeriod();
+      int p = CUtilsLTR::TimeframeToMinutes(tf);
+      if(p > 0)
+        {
+         ArrayResize(periods, count+1);
+         periods[count] = p;
+         count++;
+        }
+     }
+
+   // Période du trailing
+   if(m_trailing != NULL)
+     {
+      ENUM_TIMEFRAMES tf = m_trailing.GetPeriod();
+      int p = CUtilsLTR::TimeframeToMinutes(tf);
+      if(p > 0)
+        {
+         ArrayResize(periods, count+1);
+         periods[count] = p;
+         count++;
+        }
+     }
+
+   // Période du money
+   if(m_money != NULL)
+     {
+      ENUM_TIMEFRAMES tf = m_money.GetPeriod();
+      int p = CUtilsLTR::TimeframeToMinutes(tf);
+      if(p > 0)
+        {
+         ArrayResize(periods, count+1);
+         periods[count] = p;
+         count++;
+        }
+     }
+   // S'il y a au moins un objet avec période, calculer la période globale
+   if(count > 0)
+     {
+      int globalGCD = periods[0];
+      for(int i = 1; i < count; i++)
+         globalGCD = CUtilsLTR::GCD(globalGCD, periods[i]);
+
+      int minPeriod = periods[0];
+      for(int i = 1; i < count; i++)
+         if(periods[i] < minPeriod)
+            minPeriod = periods[i];
+
+      // Si le PGCD vaut 1 minute, on retombe sur la plus petite période
+      int effectivePeriod = (globalGCD == 1 ? minPeriod : globalGCD);
+
+      // Conversion de la période effective en flag
+      m_period_flags = CUtilsLTR::ConvertMinutesToFlag(effectivePeriod);
+     }     
 //--- ok
    return(true);
   }
@@ -673,8 +746,8 @@ bool CExpert::Refresh(void)
       return(false);
 //--- check need processing
    TimeToStruct(m_symbol.Time(),time);
-   if(m_period_flags!=WRONG_VALUE && m_period_flags!=0)
-     {CUtilsLTR::LogToDesktop(StringFormat("<- Horodatage du test refresh et m_period_flag :%f",m_period_flags ));
+   if(m_period_flags!=WRONG_VALUE && m_period_flags!=0) {
+     //CUtilsLTR::LogToDesktop(StringFormat("<- Horodatage du test refresh et m_period_flag :%f",m_period_flags ));
       if((m_period_flags&TimeframesFlags(time))==0)
          return(false);
      }
