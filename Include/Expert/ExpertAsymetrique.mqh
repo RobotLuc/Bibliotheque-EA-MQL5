@@ -674,8 +674,10 @@ bool CExpert::Refresh(void)
 //--- check need processing
    TimeToStruct(m_symbol.Time(),time);
    if(m_period_flags!=WRONG_VALUE && m_period_flags!=0)
+     {CUtilsLTR::LogToDesktop(StringFormat("<- Horodatage du test refresh et m_period_flag :%f",m_period_flags ));
       if((m_period_flags&TimeframesFlags(time))==0)
          return(false);
+     }
    m_last_tick_time=time;
 //--- refresh indicators
    m_indicators.Refresh();
