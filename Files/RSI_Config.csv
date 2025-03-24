@@ -1,0 +1,3 @@
+Timeframe;Period;Applied;UsePattern0;UsePattern1;UsePattern2;UsePattern3;UsePattern4;UsePattern5;PoidsMotif0;PoidsMotif1;PoidsMotif2;PoidsMotif3;PoidsMotif4;PoidsMotif5;SeuilSurVendu;SeuilSurAchete
+PERIOD_M5;14;PRICE_WEIGHTED;1;0;1;0;1;0;50;100;30;40;50;60;30.0;70.0
+PERIOD_M15;21;PRICE_CLOSE;0;1;0;1;0;1;100;50;40;30;20;10;35.0;65.0
