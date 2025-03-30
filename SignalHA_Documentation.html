@@ -1,0 +1,131 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Documentation Signal Heiken Ashi Amélioré</title>
+    <style>
+        body {
+            font-family: "Segoe UI", sans-serif;
+            line-height: 1.6;
+            background-color: #fefefe;
+            color: #333;
+            margin: 2em auto;
+            max-width: 900px;
+            padding: 1em;
+        }
+        h1, h2, h3 {
+            color: #0073aa;
+        }
+        code {
+            background-color: #f4f4f4;
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-size: 95%;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1em 0;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 0.6em;
+            text-align: left;
+        }
+        th {
+            background-color: #e9f5fb;
+        }
+        .note {
+            font-style: italic;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <h1>Documentation du signal Heiken Ashi Amélioré (CSignalHAm)</h1>
+
+    <p>Le signal Heiken Ashi Amélioré détecte automatiquement certains types de chandeliers sur le graphique,
+    en se basant sur leur forme, leur taille et leurs mèches. Chaque motif détecté peut être activé/désactivé
+    et recevoir un poids pour participer au vote du signal global (achat ou vente).</p>
+
+    <h2>Paramètres configurables</h2>
+    <h3>Motifs détectables</h3>
+    <p>Voici les 6 motifs reconnus par l’indicateur :</p>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Nom du motif</th>
+            <th>Conditions de détection (simplifiées)</th>
+            <th>Paramètres utilisés</th>
+        </tr>
+        <tr>
+            <td>0</td>
+            <td>Bougie directionnelle</td>
+            <td>Corps haussier ou baissier simple, sans autre motif particulier</td>
+            <td>aucun (juste direction)</td>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>Grand corps</td>
+            <td>Corps très grand, mèches petites</td>
+            <td><code>pct_big_body</code>, <code>pct_small_wick</code></td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>Cul plat</td>
+            <td>Une mèche très petite d’un côté, et une autre pas trop longue</td>
+            <td><code>pct_medium_body</code>, <code>pct_tiny_wick</code>, <code>pct_long_wick</code></td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>Doji classique</td>
+            <td>Corps très petit, deux mèches moyennes</td>
+            <td><code>pct_doji_body</code>, <code>pct_small_wick</code></td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>Doji pied long</td>
+            <td>Corps très petit, deux longues mèches</td>
+            <td><code>pct_doji_body</code>, <code>pct_long_wick</code></td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>Doji libellule / tombeau</td>
+            <td>Corps très petit, une mèche très longue d’un seul côté</td>
+            <td><code>pct_doji_body</code>, <code>pct_long_wick</code>, <code>pct_tiny_wick</code></td>
+        </tr>
+    </table>
+
+    <h3>Autres paramètres</h3>
+    <ul>
+        <li><code>dojibefore</code> : nombre de bougies précédentes à vérifier (dans le bon sens) pour valider un doji.</li>
+        <li><code>auto_fullsize</code> : si activé, les tailles sont exprimées en pourcentage de la bougie complète.</li>
+        <li><code>fullsize_pts</code> : si <code>auto_fullsize</code> est désactivé, définit une taille fixe (en points) comme référence.</li>
+    </ul>
+
+    <h2>Logique du vote</h2>
+    <p>À chaque bougie, le signal regarde si l’une des configurations est reconnue, et attribue un score
+    (poids) à cette reconnaissance. Les motifs activés peuvent donner un "vote" pour l’achat (long)
+    ou la vente (short), selon que la bougie est haussière ou baissière.</p>
+
+    <p>Il y a deux grandes familles de bougies :</p>
+    <ul>
+        <li><strong>Les bougies directionnelles</strong> (ex : motif 0 à 2) : utilisées si la tendance est claire.</li>
+        <li><strong>Les dojis</strong> (motifs 3 à 5) : utilisées comme signaux de retournement potentiels, mais seulement
+        si les bougies précédentes allaient dans l’autre sens (ex: 2 bougies rouges → doji haussier possible).</li>
+    </ul>
+
+    <p>Si aucun motif n’est reconnu ou si aucun motif activé n’est détecté, alors le filtre ne donne
+    pas de vote à cette bougie.</p>
+
+    <h2>Conseil d’utilisation</h2>
+    <p>Ce signal est très flexible : vous pouvez désactiver certains motifs, donner plus de poids aux
+    motifs fiables pour votre stratégie, et même jouer sur la taille minimale des mèches ou du corps.
+    Pensez à tester vos réglages en démo avant toute mise en réel.</p>
+
+    <p class="note">Note : ce filtre ne déclenche pas à lui seul une prise de position. Il doit être combiné
+    à d’autres signaux dans un système global de décision (via le robot ExpertRSI-HA-FixedPips par exemple).</p>
+
+</body>
+</html>

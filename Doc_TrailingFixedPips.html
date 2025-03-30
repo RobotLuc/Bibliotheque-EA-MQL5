@@ -1,0 +1,68 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Documentation utilisateur – CTrailingFixedPips</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; margin: 40px; }
+        h1 { color: #005A9C; }
+        h2 { color: #0078D7; }
+        code { background-color: #f4f4f4; padding: 2px 4px; border-radius: 4px; }
+        table { border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background-color: #f0f0f0; }
+    </style>
+</head>
+<body>
+    <h1>📘 Documentation utilisateur – Stop suiveur CTrailingFixedPips</h1>
+
+    <p><strong>CTrailingFixedPips</strong> est une fonction de stop suiveur (ou trailing stop) destinée aux traders. Elle permet de sécuriser automatiquement vos gains en remontant votre stop loss dès que le prix évolue en votre faveur.</p>
+
+    <h2>🎯 À quoi ça sert ?</h2>
+    <p>Le stop suiveur fixe suit le prix en ajoutant (ou retirant) un nombre de points fixe lorsque la position devient profitable. Vous définissez :</p>
+    <ul>
+        <li><strong>StopLevel</strong> : le nombre de points que vous souhaitez maintenir entre le prix et votre stop loss.</li>
+        <li><strong>ProfitLevel</strong> (optionnel) : une cible de take profit qui évolue aussi avec le prix.</li>
+    </ul>
+
+    <h2>⚙️ Paramètres configurables</h2>
+    <table>
+        <tr><th>Paramètre</th><th>Description</th><th>Valeur par défaut</th></tr>
+        <tr><td><code>StopLevel</code></td><td>Distance en points entre le prix et le stop loss (obligatoire)</td><td>30</td></tr>
+        <tr><td><code>ProfitLevel</code></td><td>Distance en points entre le prix et le take profit (facultatif)</td><td>50</td></tr>
+    </table>
+
+    <h2>🧠 Comment ça fonctionne ?</h2>
+    <p>Quand votre position devient profitable et que le prix dépasse le niveau défini (<code>StopLevel</code>) par rapport au prix d’entrée (ou au stop loss précédent), alors :</p>
+    <ul>
+        <li>Le stop loss est déplacé pour rester à <code>StopLevel</code> derrière le prix actuel.</li>
+        <li>Si vous avez défini un <code>ProfitLevel</code>, un take profit est également placé à cette distance devant le prix.</li>
+    </ul>
+
+    <h2>📌 Exemple d’utilisation</h2>
+    <h3>Configuration</h3>
+    <ul>
+        <li><code>StopLevel</code> = 50 points</li>
+        <li><code>ProfitLevel</code> = 100 points</li>
+    </ul>
+
+    <h3>Scénario</h3>
+    <ol>
+        <li>Vous ouvrez une position longue à 1.2000</li>
+        <li>Le prix monte à 1.2055 (soit +55 points)</li>
+        <li>Le stop loss est automatiquement placé à 1.2005 (1.2055 - 50)</li>
+        <li>Le take profit est placé à 1.2155 (1.2055 + 100)</li>
+        <li>Si le prix continue à monter, le stop et le take profit suivent automatiquement</li>
+    </ol>
+
+    <h2>✅ Avantages</h2>
+    <ul>
+        <li>Automatise la sécurisation des gains</li>
+        <li>Fonctionne pour les positions longues et courtes</li>
+        <li>Facile à configurer</li>
+    </ul>
+
+    <p style="margin-top: 40px; font-style: italic; color: #555;">Rédigé par Sélène, votre assistante de trading préférée ✨</p>
+</body>
+</html>

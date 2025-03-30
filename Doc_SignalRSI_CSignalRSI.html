@@ -1,0 +1,133 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Documentation du Signal RSI - CSignalRSI</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 40px;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 1em;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+        }
+        th {
+            background-color: #eee;
+        }
+        .note {
+            background-color: #ffffcc;
+            padding: 10px;
+            border-left: 4px solid #ffeb3b;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Documentation utilisateur : Signal RSI (CSignalRSI)</h1>
+
+<p>Le signal RSI (Relative Strength Index) est un outil utilisé dans ce robot de trading pour détecter des opportunités d'achat ou de vente basées sur le comportement de l'oscillateur RSI.</p>
+
+<h2>1. Paramètres configurables</h2>
+
+<ul>
+    <li><strong>Période RSI :</strong> Nombre de bougies utilisées pour calculer la valeur du RSI (ex. 14).</li>
+    <li><strong>Prix appliqué :</strong> Type de prix utilisé dans le calcul du RSI (ex : clôture, médian, pondéré...)</li>
+    <li><strong>Seuil de surachat :</strong> Au-dessus de cette valeur (ex : 70), le marché est considéré comme suracheté.</li>
+    <li><strong>Seuil de survente :</strong> En-dessous de cette valeur (ex : 30), le marché est considéré comme survendu.</li>
+    <li><strong>Activation/désactivation des motifs (patterns)</strong> : chaque motif peut être activé ou non.</li>
+    <li><strong>Poids des motifs (0 à 100)</strong> : indique l'importance donnée à chaque motif dans le vote du signal.</li>
+</ul>
+
+<h2>2. Les motifs disponibles</h2>
+
+<p>Le signal RSI reconnaît les motifs suivants :</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Nom du motif</th>
+            <th>Description</th>
+            <th>Paramètres clés</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>0</td>
+            <td>Direction du RSI</td>
+            <td>Le RSI monte (achat) ou descend (vente).</td>
+            <td>Différence RSI entre deux bougies</td>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>Renversement derrière le seuil</td>
+            <td>Le RSI s’est retourné après avoir franchi un seuil de surachat ou de survente.</td>
+            <td>Seuil surachat / seuil survente</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>Échec de swing</td>
+            <td>Le RSI dépasse un sommet ou creux précédent sans confirmation par le prix.</td>
+            <td>Comparaison RSI actuelle avec les précédentes</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>Divergence simple</td>
+            <td>Le prix et le RSI évoluent en sens opposé.</td>
+            <td>Analyse de la tendance RSI vs tendance du prix</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>Double divergence</td>
+            <td>Deux divergences successives (renforcement du signal).</td>
+            <td>Analyse des deux dernières paires de sommets ou creux</td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>Épaule-Tête-Épaule RSI</td>
+            <td>Figure de retournement détectée dans le RSI.</td>
+            <td>Structure spécifique dans les extrêmes RSI</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>3. Comment fonctionne le signal ?</h2>
+
+<p>À chaque nouvelle bougie, le robot observe le comportement du RSI et tente de détecter l’un des 6 motifs ci-dessus.</p>
+
+<p>Si un motif est détecté et activé, il donne un "vote" pour acheter ou vendre. Chaque motif possède un <strong>poids</strong> défini par l’utilisateur (entre 0 et 100). Le poids est utilisé pour calculer la "note" du signal.</p>
+
+<p>Par exemple :</p>
+<ul>
+    <li>Le motif 1 est détecté et activé, avec un poids de 70 → le signal donne une note de 70.</li>
+    <li>Si le seuil de déclenchement est fixé à 60, alors ce motif est suffisant pour passer à l’action (ouvrir ou fermer une position).</li>
+</ul>
+
+<div class="note">
+    <strong>Remarque :</strong> Vous pouvez désactiver un motif si vous ne voulez pas qu’il influence la stratégie. Par exemple, ne garder que les divergences et ignorer la simple direction du RSI.
+</div>
+
+<h2>4. Utilisation recommandée</h2>
+
+<ul>
+    <li>Gardez le motif 1 (renversement derrière seuil) activé, il est souvent pertinent.</li>
+    <li>Activez les divergences pour capter les retournements puissants.</li>
+    <li>Utilisez le motif 0 pour confirmer une tendance mais avec un poids modéré (ex. 30 ou 40).</li>
+</ul>
+
+</body>
+</html>
