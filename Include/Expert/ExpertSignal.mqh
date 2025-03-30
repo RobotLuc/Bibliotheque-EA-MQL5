@@ -3,6 +3,12 @@
 //|                             Copyright 2000-2025, MetaQuotes Ltd. |
 //|                                             https://www.mql5.com |
 //+------------------------------------------------------------------+
+//+------------------------------------------------------------------+
+//| Notes de version.                                                |
+//| v0 : version initiale du framework MQL5
+//| v1 : ajout d'une méthode publique SignalMinPeriod pour travailler sur des signaux à temporalité différente dans un EA
+//| v2 : ajout d'un getter pour m_ignore pour configuration des filtres par l'utilsateur depuis un formulaire
+//+------------------------------------------------------------------+
 #include "ExpertBase.mqh"
 //+------------------------------------------------------------------+
 //| Macro definitions.                                               |
@@ -41,6 +47,8 @@ public:
    //--- methods of access to protected data
    void              BasePrice(double value)   { m_base_price=value;      }
    int               UsedSeries(void);
+   int               FiltersTotal()      const { return m_filters.Total(); } // Number of filters of current signal
+   long              Ignore() const            { return m_ignore;         } 
    //--- methods of setting adjustable parameters
    void              Weight(double value)      { m_weight=value;          }
    void              PatternsUsage(int value)  { m_patterns_usage=value;  }
