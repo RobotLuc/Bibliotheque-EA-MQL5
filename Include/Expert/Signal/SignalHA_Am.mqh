@@ -98,9 +98,9 @@ protected:
    bool              InitHAm(CIndicators *indicators);
    //--- methods of getting data
    double            HAOpen(int ind)               { return(m_ham.GetData(0,ind));    }
-   double            HAClose(int ind)              { return(m_ham.GetData(1,ind));    }
-   double            HAHigh(int ind)               { return(m_ham.GetData(2,ind));    }
-   double            HALow(int ind)                { return(m_ham.GetData(3,ind));    }
+   double            HAClose(int ind)              { return(m_ham.GetData(3,ind));    }
+   double            HAHigh(int ind)               { return(m_ham.GetData(1,ind));    }
+   double            HALow(int ind)                { return(m_ham.GetData(2,ind));    }
    double            HABull(int ind)               { return(m_ham.GetData(5,ind));    }
    double            HABody(int ind)               { return(m_ham.GetData(6,ind));    }
    double            HAUpWick(int ind)             { return(m_ham.GetData(7,ind));    }

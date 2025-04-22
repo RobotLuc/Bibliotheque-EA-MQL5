@@ -267,12 +267,11 @@ bool CExpert::Init(string symbol,ENUM_TIMEFRAMES period,bool every_tick,ulong ma
       if((m_symbol=new CSymbolInfo)==NULL)
          return(false);
      }
-   if(!m_symbol.Name(symbol))
-      return(false);
-   m_period    =period;
+
    if(!m_symbol.Name(symbol))
       return(false);
    m_period    =period;   
+
    m_every_tick=every_tick;
    m_magic     =magic;
    SetMarginMode();
