@@ -3,11 +3,12 @@
 //|  Classe utilitaire pour construire des signaux composés          |
 //+------------------------------------------------------------------+
 #property copyright "Copyright 2025, Lucas Troncy"
-//+------------------------------------------------------------------+
-//| Notes de version                                                 |
-//|28/03/2025 - Création                                             |
-//|30/03/2025 - Modification avec ajout de template                  |
-//+------------------------------------------------------------------+
+//+-------------------------------------------------------------------+
+//| Notes de version                                                  |
+//|28/03/2025 - Création                                              |
+//|30/03/2025 - Modification avec ajout de template                   |
+//|22/04/2025 - Un signal inactivé n'est plus ajouté au signal de base|
+//+-------------------------------------------------------------------+
 #ifndef __SIGNAL_BUILDER_MQH__
 #define __SIGNAL_BUILDER_MQH__
 
@@ -31,23 +32,19 @@ public:
    // Tu ajouteras ici ADXConfig, etc.
 
 private:
-   // Fonction utilitaire pour factoriser l'ajout d'un filtre avec gestion du isactive
+   // Fonction utilitaire pour factoriser l'ajout d'un filtre uniquement si isactive == true
    template<typename T>
-   static T*         AddAndConfigureFilter(CSignalITF *signal, bool isactive)
+   static T* AddAndConfigureFilter(CSignalITF *signal, bool isactive)
      {
-      if(signal == NULL)
+      if(signal == NULL || !isactive)
          return NULL;
 
       T *filter = new T;
       if(filter == NULL)
          return NULL;
 
-      int index = signal.FiltersTotal();
       if(!signal.AddFilter(filter))
          return NULL;
-
-      if(!isactive)
-         signal.Ignore(signal.Ignore() | (1 << index));
 
       return filter;
      }

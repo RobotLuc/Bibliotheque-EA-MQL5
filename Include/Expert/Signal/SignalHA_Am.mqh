@@ -237,6 +237,11 @@ int CSignalHAm::DetectPattern(int idx)
    double upwick   = HAUpWick(idx);
    double downwick = HADownWick(idx);
 
+// --- Logging des valeurs critiques ---
+   string msg = StringFormat("DetectPattern idx=%d | fullsize_price=%.5f | body=%.5f | upwick=%.5f | downwick=%.5f",
+                             idx, fullsize_price, body, upwick, downwick);
+   CUtilsLTR::LogToDesktop(msg);
+
    if(fullsize_price <= 0.0 ||
       body == EMPTY_VALUE ||
       upwick == EMPTY_VALUE ||
@@ -297,10 +302,13 @@ int CSignalHAm::LongCondition()
    int pattern = DetectPattern(idx);
 
 // --- Bougies "générales" haussières ---
-   if(bullish == 1.0 && IS_PATTERN_USAGE(0))
+   if(bullish == 1.0)
      {
-      result = m_pattern_0;
-      motif = 0;
+      if(IS_PATTERN_USAGE(0))
+        {
+         result = m_pattern_0;
+         motif = 0;
+        }
 
       if(pattern == 1 && IS_PATTERN_USAGE(1))
         {
@@ -361,10 +369,13 @@ int CSignalHAm::ShortCondition()
    int pattern = DetectPattern(idx);
 
 // --- Bougies "générales" baissières ---
-   if(bullish == 0.0 && IS_PATTERN_USAGE(0))
+   if(bullish == 0.0)
      {
-      result = m_pattern_0;
-      motif = 0;
+      if(IS_PATTERN_USAGE(0))
+        {
+         result = m_pattern_0;
+         motif = 0;
+        }
 
       if(pattern == 1 && IS_PATTERN_USAGE(1))
         {
@@ -378,6 +389,7 @@ int CSignalHAm::ShortCondition()
             motif = 2;
            }
      }
+
 
 // --- Bougies doji ou de transition ---
    if(motif == -1 && ArePreviousCandlesBullish()) // Seulement si aucun motif général baissier n'est détecté
@@ -404,8 +416,8 @@ int CSignalHAm::ShortCondition()
 // --- Logging ---
    if(motif != -1)
       CUtilsLTR::LogToDesktop(StringFormat("Short - Motif : %d | Vote : %d | Body : %f", motif, result, body));
-   else
-      CUtilsLTR::LogToDesktop(StringFormat("Pas de tendance baissière - Body : %f | Vote : %d | poids : %f", body, result, m_weight));
+//   else
+//      CUtilsLTR::LogToDesktop(StringFormat("Pas de tendance baissière - Body : %f | Vote : %d | poids : %f", body, result, m_weight));
 
    return result;
   }

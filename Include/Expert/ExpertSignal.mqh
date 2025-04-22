@@ -48,7 +48,7 @@ public:
    void              BasePrice(double value)   { m_base_price=value;      }
    int               UsedSeries(void);
    int               FiltersTotal()      const { return m_filters.Total(); } // Number of filters of current signal
-   long              Ignore() const            { return m_ignore;         } 
+   long              Ignore() const            { return m_ignore;         }
    //--- methods of setting adjustable parameters
    void              Weight(double value)      { m_weight=value;          }
    void              PatternsUsage(int value)  { m_patterns_usage=value;  }
@@ -98,18 +98,18 @@ public:
 //| Constructor                                                      |
 //+------------------------------------------------------------------+
 CExpertSignal::CExpertSignal(void) : m_base_price(0.0),
-                                     m_general(-1),          // no "main" signal
-                                     m_weight(1.0),
-                                     m_patterns_usage(-1),   // all models are used
-                                     m_ignore(0),            // all additional filters are used
-                                     m_invert(0),
-                                     m_threshold_open(50),
-                                     m_threshold_close(100),
-                                     m_price_level(0.0),
-                                     m_stop_level(0.0),
-                                     m_take_level(0.0),
-                                     m_expiration(0),
-                                     m_direction(EMPTY_VALUE)
+   m_general(-1),          // no "main" signal
+   m_weight(1.0),
+   m_patterns_usage(-1),   // all models are used
+   m_ignore(0),            // all additional filters are used
+   m_invert(0),
+   m_threshold_open(50),
+   m_threshold_close(100),
+   m_price_level(0.0),
+   m_stop_level(0.0),
+   m_take_level(0.0),
+   m_expiration(0),
+   m_direction(EMPTY_VALUE)
   {
   }
 //+------------------------------------------------------------------+
@@ -232,25 +232,25 @@ bool CExpertSignal::AddFilter(CExpertSignal *filter)
   }
 //+------------------------------------------------------------------+
 //| Retrieve signal and filter min period                            |
-//+------------------------------------------------------------------+  
+//+------------------------------------------------------------------+
 ENUM_TIMEFRAMES CExpertSignal::SignalMinPeriod()
-{
+  {
    ENUM_TIMEFRAMES min_period = m_period; // Initialiser avec la période du signal principal
-   
+
    int total = m_filters.Total();
    for(int i = 0; i < total; i++)
-   {
+     {
       CExpertSignal *filter = m_filters.At(i);
       if(filter == NULL)
          continue;
-      
+
       ENUM_TIMEFRAMES filter_period = filter.SignalMinPeriod();
       if(filter_period < min_period)
          min_period = filter_period;
-   }
-   
+     }
+
    return min_period;
-}  
+  }
 //+------------------------------------------------------------------+
 //| Generating a buy signal                                          |
 //+------------------------------------------------------------------+
@@ -489,7 +489,13 @@ double CExpertSignal::Direction(void)
    if(number!=0)
       result/=number;
 //--- return the result
-CUtilsLTR::LogToDesktop(StringFormat("Résultat du vote pondéré : %f",result));
+
+   if(result!=0)
+     {
+      CUtilsLTR::LogToDesktop(StringFormat("Résultat du vote pondéré : %f",result));
+     };
    return(result);
   }
+
+
 //+------------------------------------------------------------------+
