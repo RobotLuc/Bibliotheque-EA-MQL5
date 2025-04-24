@@ -42,6 +42,7 @@ public:
 //+------------------------------------------------------------------+
 void CMoneyFixedLot::CMoneyFixedLot(void) : m_lots(0.1)
   {
+   m_has_tf_significance=false;
   }
 //+------------------------------------------------------------------+
 //| Destructor                                                       |

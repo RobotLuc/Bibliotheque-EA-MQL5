@@ -43,8 +43,9 @@ public:
 //| Constructor                                                      |
 //+------------------------------------------------------------------+
 void CTrailingFixedPips::CTrailingFixedPips(void) : m_stop_level(30),
-                                                    m_profit_level(50)
+   m_profit_level(50)
   {
+   m_has_tf_significance = false;
   }
 //+------------------------------------------------------------------+
 //| Destructor                                                       |

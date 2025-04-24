@@ -34,6 +34,7 @@ public:
 //+------------------------------------------------------------------+
 void CMoneyFixedMargin::CMoneyFixedMargin(void)
   {
+   m_has_tf_significance = false;
   }
 //+------------------------------------------------------------------+
 //| Destructor                                                       |

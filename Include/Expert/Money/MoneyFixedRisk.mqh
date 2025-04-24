@@ -35,6 +35,7 @@ public:
 //+------------------------------------------------------------------+
 void CMoneyFixedRisk::CMoneyFixedRisk(void)
   {
+   m_has_tf_significance = false;
   }
 //+------------------------------------------------------------------+
 //| Destructor                                                       |

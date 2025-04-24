@@ -53,12 +53,14 @@ public:
 //| Constructor                                                      |
 //+------------------------------------------------------------------+
 CSignalITF::CSignalITF(void) : m_good_minute_of_hour(-1),
-                               m_bad_minutes_of_hour(0),
-                               m_good_hour_of_day(-1),
-                               m_bad_hours_of_day(0),
-                               m_good_day_of_week(-1),
-                               m_bad_days_of_week(0)
+   m_bad_minutes_of_hour(0),
+   m_good_hour_of_day(-1),
+   m_bad_hours_of_day(0),
+   m_good_day_of_week(-1),
+   m_bad_days_of_week(0)
+
   {
+   m_has_tf_significance=false;
   }
 //+------------------------------------------------------------------+
 //| Destructor                                                       |
@@ -75,21 +77,21 @@ double CSignalITF::Direction(void)
 //---
    TimeCurrent(s_time);
 //--- check days conditions
-   if(!((m_good_day_of_week==-1 || m_good_day_of_week==s_time.day_of_week) && 
-      !(m_bad_days_of_week&(1<<s_time.day_of_week))))
+   if(!((m_good_day_of_week==-1 || m_good_day_of_week==s_time.day_of_week) &&
+        !(m_bad_days_of_week&(1<<s_time.day_of_week))))
       return(EMPTY_VALUE);
 //--- check hours conditions
-   if(!((m_good_hour_of_day==-1 || m_good_hour_of_day==s_time.hour) && 
-      !(m_bad_hours_of_day&(1<<s_time.hour))))
+   if(!((m_good_hour_of_day==-1 || m_good_hour_of_day==s_time.hour) &&
+        !(m_bad_hours_of_day&(1<<s_time.hour))))
       return(EMPTY_VALUE);
 //--- check minutes conditions
-   if(!((m_good_minute_of_hour==-1 || m_good_minute_of_hour==s_time.min) && 
-      !(m_bad_minutes_of_hour&(1<<s_time.min))))
+   if(!((m_good_minute_of_hour==-1 || m_good_minute_of_hour==s_time.min) &&
+        !(m_bad_minutes_of_hour&(1<<s_time.min))))
       return(EMPTY_VALUE);
 //--- condition OK
-   double direction_parent = CExpertSignal::Direction(); 
+   double direction_parent = CExpertSignal::Direction();
    return direction_parent; // renvoie le score global
-  }  
+  }
 //+------------------------------------------------------------------+
 //| Override of SignalMinPeriod for neutral container (CSignalITF)   |
 //| Purpose : prevent base period (from Init) from interfering       |

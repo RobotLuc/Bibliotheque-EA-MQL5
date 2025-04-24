@@ -45,6 +45,7 @@ protected:
 //+------------------------------------------------------------------+
 void CMoneySizeOptimized::CMoneySizeOptimized(void) : m_decrease_factor(3.0)
   {
+   m_has_tf_significance = false;
   }
 //+------------------------------------------------------------------+
 //| Destructor                                                       |
