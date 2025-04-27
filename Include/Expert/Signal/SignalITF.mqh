@@ -47,7 +47,6 @@ public:
    void              BadDaysOfWeek(int value)     { m_bad_days_of_week=value;    }
    //--- methods of checking conditions of entering the market
    virtual double    Direction(void);
-   virtual ENUM_TIMEFRAMES   SignalMinPeriod(void) override;
   };
 //+------------------------------------------------------------------+
 //| Constructor                                                      |
@@ -92,28 +91,4 @@ double CSignalITF::Direction(void)
    double direction_parent = CExpertSignal::Direction();
    return direction_parent; // renvoie le score global
   }
-//+------------------------------------------------------------------+
-//| Override of SignalMinPeriod for neutral container (CSignalITF)   |
-//| Purpose : prevent base period (from Init) from interfering       |
-//| with real signal periods                                         |
-//+------------------------------------------------------------------+
-ENUM_TIMEFRAMES CSignalITF::SignalMinPeriod(void)
-  {
-   ENUM_TIMEFRAMES min_period = PERIOD_MN1;
-
-   int total = m_filters.Total();
-   for(int i = 0; i < total; i++)
-     {
-      CExpertSignal *filter = m_filters.At(i);
-      if(filter == NULL)
-         continue;
-
-      ENUM_TIMEFRAMES filter_period = filter.SignalMinPeriod();
-      if(filter_period < min_period)
-         min_period = filter_period;
-     }
-
-   return min_period;
-  }
-
 //+------------------------------------------------------------------+

@@ -235,22 +235,60 @@ bool CExpertSignal::AddFilter(CExpertSignal *filter)
 //+------------------------------------------------------------------+
 ENUM_TIMEFRAMES CExpertSignal::SignalMinPeriod()
   {
-   ENUM_TIMEFRAMES min_period = m_period; // Initialiser avec la période du signal principal
+// Initialisation 
+   PrintFormat("[DEBUG] début de la recherche de la période : %s","on y va !");
+ 
+   ENUM_TIMEFRAMES min_period = WRONG_VALUE;  // Valeur initiale
+   
+   PrintFormat("[DEBUG] initialisation de min_period à : %d",min_period);
+   PrintFormat("[DEBUG] est-ce que ce signal a une tf signifiante : %d",m_has_tf_significance);
+   
+// Recherche de la période du signal en cours, si signifiant   
+   if (m_has_tf_significance)
+      min_period = GetPeriod();
+   
+   PrintFormat("[DEBUG] valeur de min_period après recherche dans le signal : %d",min_period);
+
+// Recherche sur les filtres du signal en cours
 
    int total = m_filters.Total();
-   for(int i = 0; i < total; i++)
+   PrintFormat("[DEBUG] ce signal a : %d filtres",total);
+
+   for(int i = 0; i < total; i++)  // Boucle sur les filtres
      {
-      CExpertSignal *filter = m_filters.At(i);
-      if(filter == NULL)
+      CExpertSignal *filter = m_filters.At(i);  // Récupère chaque filtre
+      if(filter == NULL)  // Ignore les filtres null
+        {
+         PrintFormat("[DEBUG] filter[%d] : est un pointeur null",i);
+         continue;
+        }
+
+      // Log pour voir quel filtre est traité
+      PrintFormat("[DEBUG] filter[%d] : HasTimeframeSignificance = %s",
+                  i,
+                  filter.HasTimeframeSignificance() ? "true" : "false");
+
+
+      // Si le filtre n'a pas de signifiance de période, on le passe
+      if(!filter.HasTimeframeSignificance())
+        {
+         PrintFormat("[DEBUG] filter[%d] : Ignoré (pas de signifiance de période)", i);
+         continue;
+        }
+
+      ENUM_TIMEFRAMES filter_period = filter.SignalMinPeriod();  // Récupère la période du filtre
+      PrintFormat("[DEBUG] filter[%d] SignalMinPeriod() = %d", i, filter_period);
+      if(filter_period == WRONG_VALUE)  // Si la période est invalide, on passe ce filtre
          continue;
 
-      ENUM_TIMEFRAMES filter_period = filter.SignalMinPeriod();
-      if(filter_period < min_period)
+      // Si c'est le premier filtre ou si la période est plus petite que la précédente, on la garde
+      if(min_period == WRONG_VALUE || filter_period < min_period)
          min_period = filter_period;
      }
-
-   return min_period;
+   PrintFormat("[DEBUG] min_period finale = %d", min_period);
+   return min_period;  // Retourne la période minimale
   }
+
 //+------------------------------------------------------------------+
 //| Generating a buy signal                                          |
 //+------------------------------------------------------------------+

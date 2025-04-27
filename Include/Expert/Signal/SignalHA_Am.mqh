@@ -467,10 +467,7 @@ bool CSignalHAm::ArePreviousCandlesBearish()
 void CSignalHAm::DojiBefore(int value)
   {
    if(value < 1)
-     {
-      CUtilsLTR::LogToDesktop(StringFormat(": valeur incorrecte (%d). Doit être >= 1. Valeur ignorée.", value));
-      return;
-     }
+      PrintFormat("Attention, valeur DojiBefore inférieure à 1 : ", value);
    m_ham_dojibefore = value;
   }
 //+------------------------------------------------------------------+

@@ -39,6 +39,7 @@ protected:
    int               m_pattern_1;      // model 1 "price crossed the indicator with opposite direction"
    int               m_pattern_2;      // model 2 "price crossed the indicator with the same direction"
    int               m_pattern_3;      // model 3 "piercing"
+   double            m_min_ma_change; // Variation minimale significative de la MA
 
 public:
                      CSignalMA(void);
@@ -48,11 +49,13 @@ public:
    void              Shift(int value)                    { m_ma_shift=value;           }
    void              Method(ENUM_MA_METHOD value)        { m_ma_method=value;          }
    void              Applied(ENUM_APPLIED_PRICE value)   { m_ma_applied=value;         }
+   void              MinMAChange(double value)           { m_min_ma_change = value;    }
    //--- methods of adjusting "weights" of market models
    void              Pattern_0(int value)                { m_pattern_0=value;          }
    void              Pattern_1(int value)                { m_pattern_1=value;          }
    void              Pattern_2(int value)                { m_pattern_2=value;          }
    void              Pattern_3(int value)                { m_pattern_3=value;          }
+
    //--- method of verification of settings
    virtual bool      ValidationSettings(void);
    //--- method of creating the indicator and timeseries
@@ -76,13 +79,14 @@ protected:
 //| Constructor                                                      |
 //+------------------------------------------------------------------+
 CSignalMA::CSignalMA(void) : m_ma_period(12),
-                             m_ma_shift(0),
-                             m_ma_method(MODE_SMA),
-                             m_ma_applied(PRICE_CLOSE),
-                             m_pattern_0(80),
-                             m_pattern_1(10),
-                             m_pattern_2(60),
-                             m_pattern_3(60)
+   m_ma_shift(0),
+   m_ma_method(MODE_SMA),
+   m_ma_applied(PRICE_CLOSE),
+   m_pattern_0(80),
+   m_pattern_1(10),
+   m_pattern_2(60),
+   m_pattern_3(60),
+   m_min_ma_change(0.0)
   {
 //--- initialization of protected data
    m_used_series=USE_SERIES_OPEN+USE_SERIES_HIGH+USE_SERIES_LOW+USE_SERIES_CLOSE;
@@ -102,9 +106,9 @@ bool CSignalMA::ValidationSettings(void)
    if(!CExpertSignal::ValidationSettings())
       return(false);
 //--- initial data checks
-   if(m_ma_period<=0)
+   if(m_ma_period<=0 || m_min_ma_change <0)
      {
-      printf(__FUNCTION__+": period MA must be greater than 0");
+      printf(__FUNCTION__+": period MA must be greater than 0, Min MA Change must be positive or zero");
       return(false);
      }
 //--- ok
@@ -161,7 +165,7 @@ int CSignalMA::LongCondition(void)
    if(DiffCloseMA(idx)<0.0)
      {
       //--- the close price is below the indicator
-      if(IS_PATTERN_USAGE(1) && DiffOpenMA(idx)>0.0 && DiffMA(idx)>0.0)
+      if(IS_PATTERN_USAGE(1) && DiffOpenMA(idx)>0.0 && DiffMA(idx)>m_min_ma_change)
         {
          //--- the open price is above the indicator (i.e. there was an intersection), but the indicator is directed upwards
          result=m_pattern_1;
@@ -175,7 +179,7 @@ int CSignalMA::LongCondition(void)
       if(IS_PATTERN_USAGE(0))
          result=m_pattern_0;
       //--- if the indicator is directed upwards
-      if(DiffMA(idx)>0.0)
+      if(DiffMA(idx)>m_min_ma_change)
         {
          if(DiffOpenMA(idx)<0.0)
            {
@@ -215,7 +219,7 @@ int CSignalMA::ShortCondition(void)
    if(DiffCloseMA(idx)>0.0)
      {
       //--- the close price is above the indicator
-      if(IS_PATTERN_USAGE(1) && DiffOpenMA(idx)<0.0 && DiffMA(idx)<0.0)
+      if(IS_PATTERN_USAGE(1) && DiffOpenMA(idx)<0.0 && DiffMA(idx)<-m_min_ma_change)
         {
          //--- the open price is below the indicator (i.e. there was an intersection), but the indicator is directed downwards
          result=m_pattern_1;
@@ -229,7 +233,7 @@ int CSignalMA::ShortCondition(void)
       if(IS_PATTERN_USAGE(0))
          result=m_pattern_0;
       //--- the indicator is directed downwards
-      if(DiffMA(idx)<0.0)
+      if(DiffMA(idx)<-m_min_ma_change)
         {
          if(DiffOpenMA(idx)>0.0)
            {

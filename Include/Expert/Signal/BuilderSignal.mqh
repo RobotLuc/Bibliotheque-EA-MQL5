@@ -34,7 +34,7 @@ public:
 private:
    // Fonction utilitaire pour factoriser l'ajout d'un filtre uniquement si isactive == true
    template<typename T>
-   static T* AddAndConfigureFilter(CSignalITF *signal, bool isactive)
+   static T*         AddAndConfigureFilter(CSignalITF *signal, bool isactive)
      {
       if(signal == NULL || !isactive)
          return NULL;
@@ -92,23 +92,32 @@ bool CSignalBuilder::BuildAndAddFilter(CSignalITF *signal, const RSIConfig &cfg,
    CSignalRSI *filter = AddAndConfigureFilter<CSignalRSI>(signal, isactive);
    if(filter == NULL)
       return false;
-   
+
    filter.Period(cfg.tf);
    filter.PeriodRSI(cfg.period);
    filter.Applied(cfg.price);
    filter.PatternsUsage(CUtilsLTR::EncodeBitmask(cfg.enabled));
+
    filter.Pattern_0(cfg.poids[0]);
    filter.Pattern_1(cfg.poids[1]);
    filter.Pattern_2(cfg.poids[2]);
    filter.Pattern_3(cfg.poids[3]);
    filter.Pattern_4(cfg.poids[4]);
    filter.Pattern_5(cfg.poids[5]);
+   filter.Pattern_6(cfg.poids[6]); // ➔ Ajout pour le motif 6
+
    filter.SeuilSurAchete(cfg.seuil_surachete);
    filter.SeuilSurVendu(cfg.seuil_survendu);
+   filter.MinRSIChange(cfg.min_rsi_change);
+
+// ➔ Ajout des seuils pour le motif 6
+   filter.SeuilMedianMax(cfg.seuil_medianmax);
+   filter.SeuilMaximum(cfg.seuil_maximum);
+   filter.SeuilMedianMin(cfg.seuil_medianmin);
+   filter.SeuilMinimum(cfg.seuil_minimum);
 
    return filter.ValidationSettings();
   }
-
 //+------------------------------------------------------------------+
 //| Implémentation : filtre Moyenne Mobile                           |
 //+------------------------------------------------------------------+
@@ -129,6 +138,7 @@ bool CSignalBuilder::BuildAndAddFilter(CSignalITF *signal, const MAConfig &cfg, 
    filter.Pattern_2(cfg.poids[2]);
    filter.Pattern_3(cfg.poids[3]);
    filter.PatternsUsage(CUtilsLTR::EncodeBitmask(cfg.enabled));
+   filter.MinMAChange(cfg.min_ma_change);
    return filter.ValidationSettings();
   }
 

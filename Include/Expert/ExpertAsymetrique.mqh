@@ -70,11 +70,11 @@ protected:
    //---
    int               m_waiting_event;            // flags of expected trade events
    //--- trading objects
-   CExpertTrade     *m_trade;                    // trading object
-   CExpertSignal    *m_signal_open;              // trading open signals object
-   CExpertSignal    *m_signal_close;             // trading close signals object   
-   CExpertMoney     *m_money;                    // money manager object
-   CExpertTrailing  *m_trailing;                 // trailing stops object
+   CExpertTrade      *m_trade;                    // trading object
+   CExpertSignal     *m_signal_open;              // trading open signals object
+   CExpertSignal     *m_signal_close;             // trading close signals object
+   CExpertMoney      *m_money;                    // money manager object
+   CExpertTrailing   *m_trailing;                 // trailing stops object
    bool              m_check_volume;             // check and decrease trading volume before OrderSend
    //--- indicators
    CIndicators       m_indicators;               // indicator collection to fast recalculations
@@ -97,7 +97,7 @@ public:
    void              CheckVolumeBeforeTrade(const bool flag) { m_check_volume=flag; }
    //--- initialization trading objects
    virtual bool      InitSignalOpen(CExpertSignal *signal=NULL);
-   virtual bool      InitSignalClose(CExpertSignal *signal=NULL);   
+   virtual bool      InitSignalClose(CExpertSignal *signal=NULL);
    virtual bool      InitTrailing(CExpertTrailing *trailing=NULL);
    virtual bool      InitMoney(CExpertMoney *money=NULL);
    virtual bool      InitTrade(ulong magic,CExpertTrade *trade=NULL);
@@ -112,9 +112,9 @@ public:
    int               MaxOrders(void)                  const { return(m_max_orders);           }
    void              MaxOrders(int value)                   { m_max_orders=value;             }
    //--- methods of access to protected data
-   CExpertSignal    *SignalOpen(void)            const { return(m_signal_open);               }
-   CExpertSignal    *SignalClose(void)           const { return(m_signal_close);              }
-   
+   CExpertSignal     *SignalOpen(void)            const { return(m_signal_open);               }
+   CExpertSignal     *SignalClose(void)           const { return(m_signal_close);              }
+
    //--- method of verification of settings
    virtual bool      ValidationSettings();
    //--- method of creating the indicator and timeseries
@@ -135,7 +135,7 @@ protected:
    virtual void      DeinitTrailing(void);
    virtual void      DeinitMoney(void);
    virtual void      DeinitIndicators(void);
-   //--- refreshing 
+   //--- refreshing
    virtual bool      Refresh(void);
    //--- position select depending on netting or hedging
    virtual bool      SelectPosition(void);
@@ -218,24 +218,24 @@ protected:
 //| Constructor                                                      |
 //+------------------------------------------------------------------+
 CExpert::CExpert(void) : m_period_flags(0),
-                         m_expiration(0),
-                         m_pos_tot(0),
-                         m_deal_tot(0),
-                         m_ord_tot(0),
-                         m_hist_ord_tot(0),
-                         m_beg_date(0),
-                         m_trade(NULL),
-                         m_signal_open(NULL),
-                         m_signal_close(NULL),                         
-                         m_money(NULL),
-                         m_trailing(NULL),
-                         m_check_volume(false),
-                         m_on_tick_process(true),
-                         m_on_trade_process(false),
-                         m_on_timer_process(false),
-                         m_on_chart_event_process(false),
-                         m_on_book_event_process(false),
-                         m_max_orders(1)
+   m_expiration(0),
+   m_pos_tot(0),
+   m_deal_tot(0),
+   m_ord_tot(0),
+   m_hist_ord_tot(0),
+   m_beg_date(0),
+   m_trade(NULL),
+   m_signal_open(NULL),
+   m_signal_close(NULL),
+   m_money(NULL),
+   m_trailing(NULL),
+   m_check_volume(false),
+   m_on_tick_process(true),
+   m_on_trade_process(false),
+   m_on_timer_process(false),
+   m_on_chart_event_process(false),
+   m_on_book_event_process(false),
+   m_max_orders(1)
   {
    m_other_symbol      =true;
    m_other_period      =true;
@@ -270,7 +270,7 @@ bool CExpert::Init(string symbol,ENUM_TIMEFRAMES period,bool every_tick,ulong ma
 
    if(!m_symbol.Name(symbol))
       return(false);
-   m_period    =period;   
+   m_period    =period;
 
    m_every_tick=every_tick;
    m_magic     =magic;
@@ -297,7 +297,7 @@ bool CExpert::Init(string symbol,ENUM_TIMEFRAMES period,bool every_tick,ulong ma
      {
       Print(__FUNCTION__+": error initialization signal object");
       return(false);
-     }     
+     }
    if(!InitTrailing())
      {
       Print(__FUNCTION__+": error initialization trailing object");
@@ -331,7 +331,7 @@ void CExpert::Magic(ulong value)
    if(m_signal_open!=NULL)
       m_signal_open.Magic(value);
    if(m_signal_close!=NULL)
-      m_signal_close.Magic(value);      
+      m_signal_close.Magic(value);
    if(m_money!=NULL)
       m_money.Magic(value);
    if(m_trailing!=NULL)
@@ -368,7 +368,7 @@ bool CExpert::InitTrade(ulong magic,CExpertTrade *trade=NULL)
 //+------------------------------------------------------------------+
 bool CExpert::InitSignalOpen(CExpertSignal *signal)
   {
-   if(m_signal_open!=NULL )
+   if(m_signal_open!=NULL)
       delete m_signal_open;
 //---
    if(signal==NULL)
@@ -391,7 +391,7 @@ bool CExpert::InitSignalOpen(CExpertSignal *signal)
 //+------------------------------------------------------------------+
 bool CExpert::InitSignalClose(CExpertSignal *signal)
   {
-   if(m_signal_close!=NULL )
+   if(m_signal_close!=NULL)
       delete m_signal_close;
 //---
    if(signal==NULL)
@@ -485,7 +485,7 @@ bool CExpert::ValidationSettings(void)
      {
       Print(__FUNCTION__+": error money parameters");
       return(false);
-     }   
+     }
 //--- ok
    return(true);
   }
@@ -498,7 +498,7 @@ bool CExpert::InitIndicators(CIndicators *indicators)
    CIndicators *indicators_ptr=GetPointer(m_indicators);
 //--- gather information about using of timeseries
    m_used_series|=m_signal_open.UsedSeries();
-   m_used_series|=m_signal_close.UsedSeries();   
+   m_used_series|=m_signal_close.UsedSeries();
    m_used_series|=m_trailing.UsedSeries();
    m_used_series|=m_money.UsedSeries();
 //--- create required timeseries
@@ -532,62 +532,85 @@ bool CExpert::InitIndicators(CIndicators *indicators)
       Print(__FUNCTION__+": error initialization indicators of money object");
       return(false);
      }
- // --- Calcul global pour déterminer m_period_flags
+// --- Calcul global pour déterminer m_period_flags
    int periods[];   // tableau dynamique pour stocker les périodes en minutes
    int count = 0;
 
-   // Période du signal d'ouverture
+// Période du signal d'ouverture
    if(m_signal_open != NULL)
      {
+      PrintFormat("Début du test de %s", "signal_open");
       ENUM_TIMEFRAMES tf = m_signal_open.SignalMinPeriod();
+      bool hs = m_signal_open.HasTimeframeSignificance();
+      PrintFormat("SignalMinPeriod de signal_open = %s | Signifiance : %d", EnumToString(tf), hs);
       int p = CUtilsLTR::TimeframeToMinutes(tf);
       if(p > 0)
         {
+         PrintFormat("[DEBUG] %s fournit %d min (hasTF=%s)",
+                     "signal open",   // ou un libellé manuel
+                     p,
+                     ((m_signal_open!=NULL && m_signal_open.HasTimeframeSignificance()) ? "true":"false"));
          ArrayResize(periods, count+1);
          periods[count] = p;
          count++;
         }
      }
 
-   // Période du signal de fermeture
+// Période du signal de fermeture
    if(m_signal_close != NULL)
      {
+      PrintFormat("Début du test de %s", "signal_close");
       ENUM_TIMEFRAMES tf = m_signal_close.SignalMinPeriod();
+      bool hs = m_signal_open.HasTimeframeSignificance();
+      PrintFormat("SignalMinPeriod de signal_close = %s | Signifiance : %d", EnumToString(tf), hs);
       int p = CUtilsLTR::TimeframeToMinutes(tf);
+            PrintFormat("p de signal_close = %d",p);
       if(p > 0)
         {
+         PrintFormat("[DEBUG] %s fournit %d min (hasTF=%s)",
+                     "signal close",   // ou un libellé manuel
+                     p,
+                     ((m_signal_close!=NULL && m_signal_close.HasTimeframeSignificance()) ? "true":"false"));
          ArrayResize(periods, count+1);
          periods[count] = p;
          count++;
         }
      }
 
-   // Période du trailing
+// Période du trailing
    if(m_trailing != NULL)
      {
       ENUM_TIMEFRAMES tf = m_trailing.GetPeriod();
       int p = CUtilsLTR::TimeframeToMinutes(tf);
-      if(p > 0)
+      if(p > 0 && m_trailing.HasTimeframeSignificance())
         {
+         PrintFormat("[DEBUG] %s fournit %d min (hasTF=%s)",
+                     "trailing",   // ou un libellé manuel
+                     p,
+                     ((m_trailing!=NULL && m_trailing.HasTimeframeSignificance()) ? "true":"false"));
          ArrayResize(periods, count+1);
          periods[count] = p;
          count++;
         }
      }
 
-   // Période du money
+// Période du money
    if(m_money != NULL)
      {
       ENUM_TIMEFRAMES tf = m_money.GetPeriod();
       int p = CUtilsLTR::TimeframeToMinutes(tf);
-      if(p > 0)
+      if(p > 0 && m_money.HasTimeframeSignificance())
         {
+         PrintFormat("[DEBUG] %s fournit %d min (hasTF=%s)",
+                     "money",   // ou un libellé manuel
+                     p,
+                     ((m_money!=NULL && m_money.HasTimeframeSignificance()) ? "true":"false"));
          ArrayResize(periods, count+1);
          periods[count] = p;
          count++;
         }
      }
-   // S'il y a au moins un objet avec période, calculer la période globale
+// S'il y a au moins un objet avec période, calculer la période globale
    if(count > 0)
      {
       int globalGCD = periods[0];
@@ -602,9 +625,16 @@ bool CExpert::InitIndicators(CIndicators *indicators)
       // Si le PGCD vaut 1 minute, on retombe sur la plus petite période
       int effectivePeriod = (globalGCD == 1 ? minPeriod : globalGCD);
 
+      /* >>>>>>>>>>>>>> AJOUTE LES TRACES ICI <<<<<<<<<<<<<< */
+      for(int i = 0; i < count; i++)
+         PrintFormat("periods[%d] = %d (minutes)", i, periods[i]);
+      PrintFormat("effectivePeriod = %d (minutes)", effectivePeriod);
+      /* --------------------------------------------------- */
+
       // Conversion de la période effective en flag
       m_period_flags = CUtilsLTR::ConvertMinutesToFlag(effectivePeriod);
-     }     
+
+     }
 //--- ok
    return(true);
   }
@@ -623,7 +653,7 @@ void CExpert::Deinit(void)
    DeinitMoney();
 //--- delete indicators collection
    DeinitIndicators();
-   }
+  }
 //+------------------------------------------------------------------+
 //| Deinitialization trade object                                    |
 //+------------------------------------------------------------------+
@@ -649,7 +679,7 @@ void CExpert::DeinitSignal(void)
      {
       delete m_signal_close;
       m_signal_close=NULL;
-     }        
+     }
   }
 //+------------------------------------------------------------------+
 //| Deinitialization trailing object                                 |
@@ -691,12 +721,13 @@ bool CExpert::Refresh(void)
       return(false);
 //--- check need processing
    TimeToStruct(m_symbol.Time(),time);
-   if(m_period_flags!=WRONG_VALUE && m_period_flags!=0) 
+   if(m_period_flags!=WRONG_VALUE && m_period_flags!=0)
      {
       if((m_period_flags&TimeframesFlags(time))==0)
          return(false);
      }
    m_last_tick_time=time;
+
 //--- refresh indicators
    m_indicators.Refresh();
 //--- ok
@@ -741,7 +772,7 @@ bool CExpert::Processing(void)
          return(false);
         }
      }
-//--- check if plased pending orders
+//--- check if placed pending orders
    int total=OrdersTotal();
    if(total!=0)
      {
@@ -945,19 +976,19 @@ bool CExpert::CheckReverseLong(void)
    double   tp=0.0;
    datetime expiration=TimeCurrent();
 
-   // 1) Vérifier la possibilité de fermeture longue avec le signal de fermeture
+// 1) Vérifier la possibilité de fermeture longue avec le signal de fermeture
    if(!m_signal_close.CheckCloseLong(priceClose))
       return(false);
 
-   // 2) Vérifier la possibilité d'ouverture d'une position short avec le signal d'ouverture
+// 2) Vérifier la possibilité d'ouverture d'une position short avec le signal d'ouverture
    if(!m_signal_open.CheckOpenShort(priceOpen, sl, tp, expiration))
       return(false);
 
-   // Logique éventuellement conservée depuis l'original (différence de prix close/open)
+// Logique éventuellement conservée depuis l'original (différence de prix close/open)
    if(priceClose != priceOpen)
       return(false);
 
-   // Enfin, effectuer la réversion
+// Enfin, effectuer la réversion
    return(ReverseLong(priceOpen, sl, tp));
 
 //--- check signal for long reverse operations
@@ -977,7 +1008,7 @@ bool CExpert::CheckReverseShort(void)
    double   tp=0.0;
    datetime expiration=TimeCurrent();
 
- if(!m_signal_close.CheckCloseShort(priceClose))
+   if(!m_signal_close.CheckCloseShort(priceClose))
       return(false);
 
    if(!m_signal_open.CheckOpenLong(priceOpen, sl, tp, expiration))
@@ -1676,28 +1707,72 @@ void CExpert::TimeframeAdd(ENUM_TIMEFRAMES period)
   {
    switch(period)
      {
-      case PERIOD_M1:  m_period_flags|=OBJ_PERIOD_M1;  break;
-      case PERIOD_M2:  m_period_flags|=OBJ_PERIOD_M2;  break;
-      case PERIOD_M3:  m_period_flags|=OBJ_PERIOD_M3;  break;
-      case PERIOD_M4:  m_period_flags|=OBJ_PERIOD_M4;  break;
-      case PERIOD_M5:  m_period_flags|=OBJ_PERIOD_M5;  break;
-      case PERIOD_M6:  m_period_flags|=OBJ_PERIOD_M6;  break;
-      case PERIOD_M10: m_period_flags|=OBJ_PERIOD_M10; break;
-      case PERIOD_M12: m_period_flags|=OBJ_PERIOD_M12; break;
-      case PERIOD_M15: m_period_flags|=OBJ_PERIOD_M15; break;
-      case PERIOD_M20: m_period_flags|=OBJ_PERIOD_M20; break;
-      case PERIOD_M30: m_period_flags|=OBJ_PERIOD_M30; break;
-      case PERIOD_H1:  m_period_flags|=OBJ_PERIOD_H1;  break;
-      case PERIOD_H2:  m_period_flags|=OBJ_PERIOD_H2;  break;
-      case PERIOD_H3:  m_period_flags|=OBJ_PERIOD_H3;  break;
-      case PERIOD_H4:  m_period_flags|=OBJ_PERIOD_H4;  break;
-      case PERIOD_H6:  m_period_flags|=OBJ_PERIOD_H6;  break;
-      case PERIOD_H8:  m_period_flags|=OBJ_PERIOD_H8;  break;
-      case PERIOD_H12: m_period_flags|=OBJ_PERIOD_H12; break;
-      case PERIOD_D1:  m_period_flags|=OBJ_PERIOD_D1;  break;
-      case PERIOD_W1:  m_period_flags|=OBJ_PERIOD_W1;  break;
-      case PERIOD_MN1: m_period_flags|=OBJ_PERIOD_MN1; break;
-      default:         m_period_flags=WRONG_VALUE;     break;
+      case PERIOD_M1:
+         m_period_flags|=OBJ_PERIOD_M1;
+         break;
+      case PERIOD_M2:
+         m_period_flags|=OBJ_PERIOD_M2;
+         break;
+      case PERIOD_M3:
+         m_period_flags|=OBJ_PERIOD_M3;
+         break;
+      case PERIOD_M4:
+         m_period_flags|=OBJ_PERIOD_M4;
+         break;
+      case PERIOD_M5:
+         m_period_flags|=OBJ_PERIOD_M5;
+         break;
+      case PERIOD_M6:
+         m_period_flags|=OBJ_PERIOD_M6;
+         break;
+      case PERIOD_M10:
+         m_period_flags|=OBJ_PERIOD_M10;
+         break;
+      case PERIOD_M12:
+         m_period_flags|=OBJ_PERIOD_M12;
+         break;
+      case PERIOD_M15:
+         m_period_flags|=OBJ_PERIOD_M15;
+         break;
+      case PERIOD_M20:
+         m_period_flags|=OBJ_PERIOD_M20;
+         break;
+      case PERIOD_M30:
+         m_period_flags|=OBJ_PERIOD_M30;
+         break;
+      case PERIOD_H1:
+         m_period_flags|=OBJ_PERIOD_H1;
+         break;
+      case PERIOD_H2:
+         m_period_flags|=OBJ_PERIOD_H2;
+         break;
+      case PERIOD_H3:
+         m_period_flags|=OBJ_PERIOD_H3;
+         break;
+      case PERIOD_H4:
+         m_period_flags|=OBJ_PERIOD_H4;
+         break;
+      case PERIOD_H6:
+         m_period_flags|=OBJ_PERIOD_H6;
+         break;
+      case PERIOD_H8:
+         m_period_flags|=OBJ_PERIOD_H8;
+         break;
+      case PERIOD_H12:
+         m_period_flags|=OBJ_PERIOD_H12;
+         break;
+      case PERIOD_D1:
+         m_period_flags|=OBJ_PERIOD_D1;
+         break;
+      case PERIOD_W1:
+         m_period_flags|=OBJ_PERIOD_W1;
+         break;
+      case PERIOD_MN1:
+         m_period_flags|=OBJ_PERIOD_MN1;
+         break;
+      default:
+         m_period_flags=WRONG_VALUE;
+         break;
      }
   }
 //+------------------------------------------------------------------+
@@ -1711,8 +1786,8 @@ int CExpert::TimeframesFlags(MqlDateTime &time)
    if(m_last_tick_time.min==-1)
       return(result);
 //--- check change time
-   if(time.min==m_last_tick_time.min && 
-      time.hour==m_last_tick_time.hour && 
+   if(time.min==m_last_tick_time.min &&
+      time.hour==m_last_tick_time.hour &&
       time.day==m_last_tick_time.day &&
       time.mon==m_last_tick_time.mon)
       return(OBJ_NO_PERIODS);
