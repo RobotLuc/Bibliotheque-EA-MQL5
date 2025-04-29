@@ -147,7 +147,10 @@ bool CSignalHAm::ValidationSettings(void)
   {
 //--- validation settings of additional filters
    if(!CExpertSignal::ValidationSettings())
-      return(false);
+     {
+      Print(__FUNCTION__, ": erreur d'initialisation dès CExpertSignal");
+      return false;
+     }
 //--- initial data checks
    if(m_pct_big_body     <= 0 || m_pct_big_body     > 1.0 ||
       m_pct_medium_body  <= 0 || m_pct_medium_body  > 1.0 ||
@@ -258,9 +261,9 @@ int CSignalHAm::DetectPattern(int idx)
       return 1;
 
    if(above(body, m_pct_medium_body, fullsize_price, use_relative) &&
-      ((below(upwick, m_pct_tiny_wick, fullsize_price, use_relative) &&
+      ((below(upwick, (1-m_pct_medium_body-m_pct_long_wick), fullsize_price, use_relative) &&
         below(downwick, m_pct_long_wick, fullsize_price, use_relative)) ||
-       (below(downwick, m_pct_tiny_wick, fullsize_price, use_relative) &&
+       (below(downwick, (1-m_pct_medium_body-m_pct_long_wick), fullsize_price, use_relative) &&
         below(upwick, m_pct_long_wick, fullsize_price, use_relative))))
       return 2;
 

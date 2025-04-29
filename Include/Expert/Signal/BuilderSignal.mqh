@@ -36,8 +36,8 @@ private:
    template<typename T>
    static T*         AddAndConfigureFilter(CSignalITF *signal, bool isactive)
      {
-      if(signal == NULL || !isactive)
-         return NULL;
+      if(signal == NULL)
+         return NULL; // Signal principal NULL = vraie erreur
 
       T *filter = new T;
       if(filter == NULL)
@@ -45,6 +45,10 @@ private:
 
       if(!signal.AddFilter(filter))
          return NULL;
+
+      // On ajoute ici : gestion du m_ignore
+      if(!isactive)
+         signal.IgnoreLastFilter();
 
       return filter;
      }
@@ -55,6 +59,10 @@ private:
 //+------------------------------------------------------------------+
 bool CSignalBuilder::BuildAndAddFilter(CSignalITF *signal, const HAConfig &cfg, bool isactive)
   {
+
+   if(!isactive)
+      return true; // **signal non actif : c'est un succès, pas une erreur**
+
    CSignalHAm *filter = AddAndConfigureFilter<CSignalHAm>(signal, isactive);
    if(filter == NULL)
       return false;
@@ -89,6 +97,9 @@ bool CSignalBuilder::BuildAndAddFilter(CSignalITF *signal, const HAConfig &cfg, 
 //+------------------------------------------------------------------+
 bool CSignalBuilder::BuildAndAddFilter(CSignalITF *signal, const RSIConfig &cfg, bool isactive)
   {
+   if(!isactive)
+      return true; // **signal non actif : c'est un succès, pas une erreur**
+
    CSignalRSI *filter = AddAndConfigureFilter<CSignalRSI>(signal, isactive);
    if(filter == NULL)
       return false;
@@ -123,6 +134,10 @@ bool CSignalBuilder::BuildAndAddFilter(CSignalITF *signal, const RSIConfig &cfg,
 //+------------------------------------------------------------------+
 bool CSignalBuilder::BuildAndAddFilter(CSignalITF *signal, const MAConfig &cfg, bool isactive)
   {
+
+   if(!isactive)
+      return true; // **signal non actif : c'est un succès, pas une erreur**
+
    CSignalMA *filter = AddAndConfigureFilter<CSignalMA>(signal, isactive);
    if(filter == NULL)
       return false;

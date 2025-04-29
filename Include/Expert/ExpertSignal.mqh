@@ -3,12 +3,13 @@
 //|                             Copyright 2000-2025, MetaQuotes Ltd. |
 //|                                             https://www.mql5.com |
 //+------------------------------------------------------------------+
-//+------------------------------------------------------------------+
-//| Notes de version.                                                |
-//| v0 : version initiale du framework MQL5
-//| v1 : ajout d'une méthode publique SignalMinPeriod pour travailler sur des signaux à temporalité différente dans un EA
-//| v2 : ajout d'un getter pour m_ignore pour configuration des filtres par l'utilsateur depuis un formulaire
-//+------------------------------------------------------------------+
+//+--------------------------------------------------------------------------------------------------------------------------+
+//| Notes de version.                                                                                                        |
+//| v0 : version initiale du framework MQL5                                                                                  |
+//| v1 : ajout d'une méthode publique SignalMinPeriod pour travailler sur des signaux à temporalité différente dans un EA    |
+//| v2 : ajout d'un getter pour m_ignore pour configuration des filtres par l'utilsateur depuis un formulaire                |
+//| v3 : ajout d'un IgnoreLAstFilter() pour gérer dynamiquement les filtres ajoutés à un signal                              |
+//+--------------------------------------------------------------------------------------------------------------------------+
 #include "ExpertBase.mqh"
 //+------------------------------------------------------------------+
 //| Macro definitions.                                               |
@@ -93,6 +94,7 @@ public:
    virtual double    Direction(void);
    void              SetDirection(void)                             { m_direction=Direction(); }
    virtual ENUM_TIMEFRAMES SignalMinPeriod(void);
+   void              IgnoreLastFilter(void);
   };
 //+------------------------------------------------------------------+
 //| Constructor                                                      |
@@ -235,18 +237,18 @@ bool CExpertSignal::AddFilter(CExpertSignal *filter)
 //+------------------------------------------------------------------+
 ENUM_TIMEFRAMES CExpertSignal::SignalMinPeriod()
   {
-// Initialisation 
+// Initialisation
    PrintFormat("[DEBUG] début de la recherche de la période : %s","on y va !");
- 
+
    ENUM_TIMEFRAMES min_period = WRONG_VALUE;  // Valeur initiale
-   
+
    PrintFormat("[DEBUG] initialisation de min_period à : %d",min_period);
    PrintFormat("[DEBUG] est-ce que ce signal a une tf signifiante : %d",m_has_tf_significance);
-   
-// Recherche de la période du signal en cours, si signifiant   
-   if (m_has_tf_significance)
+
+// Recherche de la période du signal en cours, si signifiant
+   if(m_has_tf_significance)
       min_period = GetPeriod();
-   
+
    PrintFormat("[DEBUG] valeur de min_period après recherche dans le signal : %d",min_period);
 
 // Recherche sur les filtres du signal en cours
@@ -534,6 +536,15 @@ double CExpertSignal::Direction(void)
      };
    return(result);
   }
-
-
+//+------------------------------------------------------------------+
+//| Ignore the last added filter                                     |
+//+------------------------------------------------------------------+
+void CExpertSignal::IgnoreLastFilter()
+  {
+   int total = m_filters.Total();
+   if(total == 0)
+      return;
+   long mask = ((long)1) << (total - 1);
+   m_ignore |= mask;
+  }
 //+------------------------------------------------------------------+
