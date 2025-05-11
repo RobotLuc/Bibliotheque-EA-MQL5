@@ -126,6 +126,7 @@ bool CSignalBuilder::BuildAndAddFilter(CSignalITF *signal, const RSIConfig &cfg,
    filter.SeuilMaximum(cfg.seuil_maximum);
    filter.SeuilMedianMin(cfg.seuil_medianmin);
    filter.SeuilMinimum(cfg.seuil_minimum);
+   filter.TrendStrategy(cfg.trend_strategy);
 
    return filter.ValidationSettings();
   }
@@ -152,8 +153,10 @@ bool CSignalBuilder::BuildAndAddFilter(CSignalITF *signal, const MAConfig &cfg, 
    filter.Pattern_1(cfg.poids[1]);
    filter.Pattern_2(cfg.poids[2]);
    filter.Pattern_3(cfg.poids[3]);
+   filter.Pattern_4(cfg.poids[4]);
    filter.PatternsUsage(CUtilsLTR::EncodeBitmask(cfg.enabled));
    filter.MinMAChange(cfg.min_ma_change);
+   filter.PriceDiffCloseMA(cfg.diff_price_ma);
    return filter.ValidationSettings();
   }
 

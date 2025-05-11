@@ -145,34 +145,75 @@ CSignalHAm::~CSignalHAm(void)
 //+------------------------------------------------------------------+
 bool CSignalHAm::ValidationSettings(void)
   {
-//--- validation settings of additional filters
    if(!CExpertSignal::ValidationSettings())
      {
       Print(__FUNCTION__, ": erreur d'initialisation dès CExpertSignal");
       return false;
      }
-//--- initial data checks
+
+   //--- Validation des seuils de pourcentage
    if(m_pct_big_body     <= 0 || m_pct_big_body     > 1.0 ||
       m_pct_medium_body  <= 0 || m_pct_medium_body  > 1.0 ||
       m_pct_doji_body    <= 0 || m_pct_doji_body    > 1.0 ||
       m_pct_long_wick    <= 0 || m_pct_long_wick    > 1.0 ||
       m_pct_small_wick   <= 0 || m_pct_small_wick   > 1.0 ||
-      m_pct_tiny_wick    <= 0 || m_pct_tiny_wick    > 1.0 ||
-      m_ham_dojibefore   <1)
+      m_pct_tiny_wick    <= 0 || m_pct_tiny_wick    > 1.0)
      {
-      Print(__FUNCTION__, ": les paramètres de pourcentage doivent être compris entre 0 et 1 et le nombre de bougies avant le doji supérieur ou égal à 1");
+      PrintFormat(__FUNCTION__, ": un ou plusieurs paramètres de pourcentage sont hors intervalle (0, 1]");
       return false;
      }
 
-//--- validation de fullsize_pts si mode absolu
+   //--- Validation du nombre de bougies avant le doji
+   if(m_ham_dojibefore < 1)
+     {
+      PrintFormat(__FUNCTION__, ": le paramètre m_ham_dojibefore doit être >= 1 (actuel = %d)", m_ham_dojibefore);
+      return false;
+     }
+
+   //--- Validation de fullsize_pts si mode absolu
    if(!m_auto_fullsize && m_fullsize_pts <= 0.0)
      {
-      Print(__FUNCTION__, ": en mode absolu (m_auto_fullsize == false), m_fullsize_pts doit être > 0");
+      PrintFormat(__FUNCTION__, ": en mode absolu (m_auto_fullsize == false), m_fullsize_pts doit être > 0");
       return false;
+     }
+
+   //--- Validation des combinaisons de seuils (mode relatif uniquement)
+   if(m_auto_fullsize || m_fullsize_pts == 0.0)
+     {
+      if(m_pct_big_body + 2.0 * m_pct_small_wick > 1.0)
+        {
+         PrintFormat(__FUNCTION__, ": combinaison interdite motif 1 (big body + 2*small wick > 100%%)");
+         return false;
+        }
+
+      if(m_pct_medium_body + m_pct_long_wick > 1.0)
+        {
+         PrintFormat(__FUNCTION__, ": combinaison interdite motif 2 (medium body + long wick > 100%%)");
+         return false;
+        }
+
+      if(m_pct_doji_body + 2.0 * m_pct_small_wick > 1.0)
+        {
+         PrintFormat(__FUNCTION__, ": combinaison interdite motif 3 (doji body + 2*small wick > 100%%)");
+         return false;
+        }
+
+      if(m_pct_doji_body + 2.0 * m_pct_long_wick > 1.0)
+        {
+         PrintFormat(__FUNCTION__, ": combinaison interdite motif 4 (doji body + 2*long wick > 100%%)");
+         return false;
+        }
+
+      if(m_pct_doji_body + m_pct_long_wick + m_pct_tiny_wick > 1.0)
+        {
+         PrintFormat(__FUNCTION__, ": combinaison interdite motif 5 (doji body + long wick + tiny wick > 100%%)");
+         return false;
+        }
      }
 
    return true;
   }
+
 //+------------------------------------------------------------------+
 //| Create indicators.                                               |
 //+------------------------------------------------------------------+

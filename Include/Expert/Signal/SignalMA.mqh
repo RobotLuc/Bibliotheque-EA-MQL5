@@ -34,12 +34,16 @@ protected:
    int               m_ma_shift;       // the "time shift" parameter of the indicator
    ENUM_MA_METHOD    m_ma_method;      // the "method of averaging" parameter of the indicator
    ENUM_APPLIED_PRICE m_ma_applied;    // the "object of averaging" parameter of the indicator
+
+   double            m_min_ma_change;  // Variation minimale significative de la MA
+   double            m_diff_price_ma;  // Distance maximale entre price close et MA pour valider signal (si prix trop loin de MA, ne pas entrer)
+
    //--- "weights" of market models (0-100)
    int               m_pattern_0;      // model 0 "price is on the necessary side from the indicator"
    int               m_pattern_1;      // model 1 "price crossed the indicator with opposite direction"
    int               m_pattern_2;      // model 2 "price crossed the indicator with the same direction"
    int               m_pattern_3;      // model 3 "piercing"
-   double            m_min_ma_change; // Variation minimale significative de la MA
+   int               m_pattern_4;      //model 4 : distance entre Price Close et MA pas trop grande
 
 public:
                      CSignalMA(void);
@@ -50,11 +54,14 @@ public:
    void              Method(ENUM_MA_METHOD value)        { m_ma_method=value;          }
    void              Applied(ENUM_APPLIED_PRICE value)   { m_ma_applied=value;         }
    void              MinMAChange(double value)           { m_min_ma_change = value;    }
+   void              PriceDiffCloseMA(double value)      { m_diff_price_ma = value;    }
+
    //--- methods of adjusting "weights" of market models
    void              Pattern_0(int value)                { m_pattern_0=value;          }
    void              Pattern_1(int value)                { m_pattern_1=value;          }
    void              Pattern_2(int value)                { m_pattern_2=value;          }
    void              Pattern_3(int value)                { m_pattern_3=value;          }
+   void              Pattern_4(int value)                { m_pattern_4=value;          }
 
    //--- method of verification of settings
    virtual bool      ValidationSettings(void);
@@ -86,7 +93,9 @@ CSignalMA::CSignalMA(void) : m_ma_period(12),
    m_pattern_1(10),
    m_pattern_2(60),
    m_pattern_3(60),
-   m_min_ma_change(0.0)
+   m_pattern_4(50),
+   m_min_ma_change(0.0),
+   m_diff_price_ma(0.0)
   {
 //--- initialization of protected data
    m_used_series=USE_SERIES_OPEN+USE_SERIES_HIGH+USE_SERIES_LOW+USE_SERIES_CLOSE;
@@ -110,6 +119,12 @@ bool CSignalMA::ValidationSettings(void)
      {
       printf(__FUNCTION__+": period MA must be greater than 0, Min MA Change must be positive or zero");
       return(false);
+     }
+
+   if(m_diff_price_ma < 0.0)
+     {
+      printf(__FUNCTION__+": DiffPriceMA must be >= 0");
+      return false;
      }
 //--- ok
    return(true);
@@ -178,6 +193,10 @@ int CSignalMA::LongCondition(void)
       //--- the close price is above the indicator (the indicator has no objections to buying)
       if(IS_PATTERN_USAGE(0))
          result=m_pattern_0;
+
+      if(IS_PATTERN_USAGE(4) && DiffCloseMA(idx)<=m_diff_price_ma)
+         result=m_pattern_4;
+
       //--- if the indicator is directed upwards
       if(DiffMA(idx)>m_min_ma_change)
         {
@@ -232,6 +251,10 @@ int CSignalMA::ShortCondition(void)
       //--- the close price is below the indicator (the indicator has no objections to buying)
       if(IS_PATTERN_USAGE(0))
          result=m_pattern_0;
+         
+      if(IS_PATTERN_USAGE(4) && DiffCloseMA(idx)>=-m_diff_price_ma)
+         result=m_pattern_4;           
+         
       //--- the indicator is directed downwards
       if(DiffMA(idx)<-m_min_ma_change)
         {

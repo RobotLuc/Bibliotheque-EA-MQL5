@@ -47,6 +47,7 @@ struct RSIConfig
    double             seuil_maximum;   // ➔ pour motif 6 (haut)
    double             seuil_medianmin; // ➔ pour motif 6 (short)
    double             seuil_minimum;   // ➔ pour motif 6 (bas)
+   bool               trend_strategy;
   };
 
 //+------------------------------------------------------------------+
@@ -55,14 +56,15 @@ struct RSIConfig
 struct MAConfig
   {
    ENUM_TIMEFRAMES     tf;
-   int                 poids[4];       // Poids des motifs 0 à 3
-   bool                enabled[4];     // Activation motifs 0 à 3
+   int                 poids[5];       // Poids des motifs 0 à 3
+   bool                enabled[5];     // Activation motifs 0 à 3
 
    int                 period;
    int                 shift;
    ENUM_MA_METHOD      method;
    ENUM_APPLIED_PRICE  price;
-   double             min_ma_change;
+   double              min_ma_change;
+   double              diff_price_ma;
   };
 
 #endif // __SIGNAL_CONFIGS_MQH__
