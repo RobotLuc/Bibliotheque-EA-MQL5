@@ -67,6 +67,21 @@ struct MAConfig
    double              diff_price_ma;
   };
 
+//+------------------------------------------------------------------+
+//| Structure pour configurer un filtre Stochastique                |
+//+------------------------------------------------------------------+
+struct StochConfig
+  {
+   ENUM_TIMEFRAMES    tf;
+   int                poids[5];         // Poids des motifs 0 à 4
+   bool               enabled[5];       // Activation motifs 0 à 4
+
+   int                periodK;          // %K period
+   int                periodD;          // %D period
+   int                period_slow;      // Smoothing
+   ENUM_STO_PRICE     applied_price;    // Source de prix
+  };
+
 #endif // __SIGNAL_CONFIGS_MQH__
 //+------------------------------------------------------------------+
 //| Fin du fichier SignalsConfig.mqh                                |

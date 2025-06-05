@@ -16,6 +16,7 @@
 #include <Expert\Signal\SignalHA_Am.mqh>
 #include <Expert\Signal\SignalRSI.mqh>
 #include <Expert\Signal\SignalMA.mqh>
+#include <Expert\Signal\SignalStoch.mqh>
 #include <Expert\Utils\UtilsLTR.mqh>
 #include <Expert\Config\SignalsConfig.mqh>
 
@@ -29,6 +30,7 @@ public:
    static bool       BuildAndAddFilter(CSignalITF *signal, const HAConfig &cfg, bool isactive=true);
    static bool       BuildAndAddFilter(CSignalITF *signal, const RSIConfig &cfg, bool isactive=true);
    static bool       BuildAndAddFilter(CSignalITF *signal, const MAConfig &cfg, bool isactive=true);
+   static bool       BuildAndAddFilter(CSignalITF *signal, const StochConfig &cfg, bool isactive=true);
    // Tu ajouteras ici ADXConfig, etc.
 
 private:
@@ -157,6 +159,34 @@ bool CSignalBuilder::BuildAndAddFilter(CSignalITF *signal, const MAConfig &cfg, 
    filter.PatternsUsage(CUtilsLTR::EncodeBitmask(cfg.enabled));
    filter.MinMAChange(cfg.min_ma_change);
    filter.PriceDiffCloseMA(cfg.diff_price_ma);
+   return filter.ValidationSettings();
+  }
+//+------------------------------------------------------------------+
+//| Implémentation : filtre Stochastique                             |
+//+------------------------------------------------------------------+
+bool CSignalBuilder::BuildAndAddFilter(CSignalITF *signal, const StochConfig &cfg, bool isactive)
+  {
+   if(!isactive)
+      return true; // **signal non actif : succès sans ajout**
+
+   CSignalStoch *filter = AddAndConfigureFilter<CSignalStoch>(signal, isactive);
+   if(filter == NULL)
+      return false;
+
+   filter.Period(cfg.tf);
+   filter.PatternsUsage(CUtilsLTR::EncodeBitmask(cfg.enabled));
+
+   filter.Pattern_0(cfg.poids[0]);
+   filter.Pattern_1(cfg.poids[1]);
+   filter.Pattern_2(cfg.poids[2]);
+   filter.Pattern_3(cfg.poids[3]);
+   filter.Pattern_4(cfg.poids[4]);
+
+   filter.PeriodK(cfg.periodK);
+   filter.PeriodD(cfg.periodD);
+   filter.PeriodSlow(cfg.period_slow);
+   filter.Applied(cfg.applied_price);
+
    return filter.ValidationSettings();
   }
 
