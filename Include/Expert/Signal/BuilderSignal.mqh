@@ -17,6 +17,7 @@
 #include <Expert\Signal\SignalRSI.mqh>
 #include <Expert\Signal\SignalMA.mqh>
 #include <Expert\Signal\SignalStoch.mqh>
+#include <Expert\Signal\SignalCrossMA.mqh>
 #include <Expert\Utils\UtilsLTR.mqh>
 #include <Expert\Config\SignalsConfig.mqh>
 
@@ -31,6 +32,7 @@ public:
    static bool       BuildAndAddFilter(CSignalITF *signal, const RSIConfig &cfg, bool isactive=true);
    static bool       BuildAndAddFilter(CSignalITF *signal, const MAConfig &cfg, bool isactive=true);
    static bool       BuildAndAddFilter(CSignalITF *signal, const StochConfig &cfg, bool isactive=true);
+   static bool       BuildAndAddFilter(CSignalITF *signal, const CrossMAConfig &cfg, bool isactive=true);
    // Tu ajouteras ici ADXConfig, etc.
 
 private:
@@ -186,6 +188,41 @@ bool CSignalBuilder::BuildAndAddFilter(CSignalITF *signal, const StochConfig &cf
    filter.PeriodD(cfg.periodD);
    filter.PeriodSlow(cfg.period_slow);
    filter.Applied(cfg.applied_price);
+
+   return filter.ValidationSettings();
+  }
+//+------------------------------------------------------------------+
+//| Implémentation : filtre CrossMA                                  |
+//+------------------------------------------------------------------+  
+bool CSignalBuilder::BuildAndAddFilter(CSignalITF *signal, const CrossMAConfig &cfg, bool isactive)
+  {
+   if(!isactive)
+      return true; // signal non actif = succès sans ajout
+
+   CSignalCrossMA *filter = AddAndConfigureFilter<CSignalCrossMA>(signal, isactive);
+   if(filter == NULL)
+      return false;
+
+   filter.Period(cfg.tf);
+   filter.PatternsUsage(CUtilsLTR::EncodeBitmask(cfg.enabled));
+
+   filter.Pattern_0(cfg.poids[0]);
+   filter.Pattern_1(cfg.poids[1]);
+   filter.Pattern_2(cfg.poids[2]);
+   filter.Pattern_3(cfg.poids[3]);
+   filter.Pattern_4(cfg.poids[4]);
+
+   // Paramètres MA rapide
+   filter.PeriodFast(cfg.period_fast);
+   filter.ShiftFast(cfg.shift_fast);
+   filter.MethodFast(cfg.method_fast);
+   filter.PriceFast(cfg.price_fast);
+
+   // Paramètres MA lente
+   filter.PeriodSlow(cfg.period_slow);
+   filter.ShiftSlow(cfg.shift_slow);
+   filter.MethodSlow(cfg.method_slow);
+   filter.PriceSlow(cfg.price_slow);
 
    return filter.ValidationSettings();
   }

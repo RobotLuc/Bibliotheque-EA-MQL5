@@ -82,6 +82,28 @@ struct StochConfig
    ENUM_STO_PRICE     applied_price;    // Source de prix
   };
 
+//+------------------------------------------------------------------+
+//| Structure pour configurer un filtre CrossMA                      |
+//+------------------------------------------------------------------+
+struct CrossMAConfig
+  {
+   ENUM_TIMEFRAMES     tf;               // Temporalité
+   int                 poids[5];         // Poids des motifs 0 à 4
+   bool                enabled[5];       // Activation motifs 0 à 4
+
+   // Paramètres MA rapide
+   int                 period_fast;
+   int                 shift_fast;
+   ENUM_MA_METHOD      method_fast;
+   ENUM_APPLIED_PRICE  price_fast;
+
+   // Paramètres MA lente
+   int                 period_slow;
+   int                 shift_slow;
+   ENUM_MA_METHOD      method_slow;
+   ENUM_APPLIED_PRICE  price_slow;
+  };
+
 #endif // __SIGNAL_CONFIGS_MQH__
 //+------------------------------------------------------------------+
 //| Fin du fichier SignalsConfig.mqh                                |
